@@ -1,0 +1,29 @@
+<!-- main/templates/main/admin_login.html -->
+
+{% extends 'main/base.html' %}
+
+{% block title %}Вход как администратор{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Вход как администратор</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_email" class="form-label">Электронная почта</label>
+            <input type="email" name="email" id="id_email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="id_password" class="form-label">Пароль</label>
+            <input type="password" name="password" id="id_password" class="form-control" required>
+        </div>
+        {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Войти как администратор</button>
+        <a href="{% url 'login' %}" class="btn btn-secondary ms-2">Назад к обычной авторизации</a>
+    </form>
+</div>
+{% endblock %}
