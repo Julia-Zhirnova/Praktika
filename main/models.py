@@ -118,3 +118,138 @@ class PeriodyPraktiki(models.Model):
     class Meta:
         managed = False
         db_table = 'Periody_praktiki'
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+class Specialnosti(models.Model):
+    kod_specialnosti = models.CharField(db_column='Kod_specialnosti', primary_key=True)  # Field name made lowercase.
+    nazvanie_specialnosti = models.CharField(db_column='Nazvanie_specialnosti', unique=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return self.nazvanie_specialnosti
+    
+    class Meta:
+        managed = False
+        db_table = 'Specialnosti'
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+class SpecialnostiGruppy(models.Model):
+    nazvanie_gruppy = models.CharField(db_column='Nazvanie_gruppy', primary_key=True)  # Field name made lowercase.
+    specialnosti_kod = models.ForeignKey('Specialnosti', models.DO_NOTHING, db_column='Specialnosti_kod')  # Field name made lowercase.
+
+    def __str__(self):
+        return f"{self.specialnosti_kod}"
+    
+    class Meta:
+        managed = False
+        db_table = 'Specialnosti_Gruppy'
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+class UchebnyjPlan(models.Model):
+    nomer_modulya = models.CharField(db_column='Nomer_modulya', primary_key=True)  # Field name made lowercase.
+    naimenovanie_modulya = models.CharField(db_column='Naimenovanie_modulya', unique=True)  # Field name made lowercase.
+    kompetencii = models.TextField(db_column='Kompetencii')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Uchebnyj_plan'
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+class ProfessionalnyeModuli(models.Model):
+    nomer_mdk = models.CharField(db_column='Nomer_MDK', primary_key=True)  # Field name made lowercase.
+    naimenovanie_mdk = models.CharField(db_column='Naimenovanie_MDK')  # Field name made lowercase.
+    modul_nomer = models.ForeignKey('UchebnyjPlan', models.DO_NOTHING, db_column='Modul_nomer')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Professionalnye_moduli'
+
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+class Zadaniya(models.Model):
+    nomer_zadaniya = models.CharField(db_column='Nomer_zadaniya', primary_key=True)  # Field name made lowercase.
+    nazvanie_temy = models.TextField(db_column='Nazvanie_temy')  # Field name made lowercase.
+    vidy_rabot = models.TextField(db_column='Vidy_rabot')  # Field name made lowercase.
+    kolichestvo_chasov_na_odnu_rabotu = models.SmallIntegerField(db_column='Kolichestvo_chasov_na_odnu_rabotu')  # Field name made lowercase.
+    praktika_nomer = models.ForeignKey('Praktiki', models.DO_NOTHING, db_column='Praktika_nomer')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Zadaniya'
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+
+from django.db import models
+
+
+class Praktiki(models.Model):
+    nomer_praktiki = models.AutoField(db_column='Nomer_praktiki', primary_key=True)  # Field name made lowercase.
+    period_nomer = models.ForeignKey('PeriodyPraktiki', models.DO_NOTHING, db_column='Period_nomer')  # Field name made lowercase.
+    specialnost_kod = models.ForeignKey('Specialnosti', models.DO_NOTHING, db_column='Specialnost_kod')  # Field name made lowercase.
+    modul_nomer = models.ForeignKey('UchebnyjPlan', models.DO_NOTHING, db_column='Modul_nomer')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Praktiki'
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
+
+class RukovoditeliPraktik(models.Model):
+    praktika_nomer = models.ForeignKey('Praktiki', models.DO_NOTHING, db_column='Praktika_nomer')  # Field name made lowercase.
+    rukovoditel_nomer = models.ForeignKey('Customuser', models.DO_NOTHING, db_column='Rukovoditel_nomer')  # Field name made lowercase.
+    nomer_rukovoditeli_praktik = models.AutoField(db_column='Nomer_rukovoditeli_praktik', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Rukovoditeli_praktik'
