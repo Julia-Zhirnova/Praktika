@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+{% block title %}Подробное задание{% endblock %}
+{% block content %}
+<h2>{{ praktika_nazvanie }}</h2>
+
+<!-- Таблица заданий -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название темы</th>
+            <th>Виды работ</th>
+            <th>Профессиональные компетенции</th>
+            <th>Кол-во часов</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in table_data %}
+        <tr>
+            <td>{{ row.nazvanie_temy }}</td>
+            <td>{{ row.vidy_rabot }}</td>
+            <td>{{ row.kompetencii }}</td>
+            <td>{{ row.kolichestvo_chasov_na_odnu_rabotu }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

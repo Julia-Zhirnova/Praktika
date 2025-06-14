@@ -6,6 +6,10 @@ from django.contrib.auth import get_user_model
 from .forms import RegistrationForm
 from django.contrib.auth.decorators import user_passes_test
 
+from django.contrib.auth.decorators import login_required
+from .models import Praktiki, PeriodyPraktiki, Specialnosti, SpecialnostiGruppy, UchebnyjPlan, ProfessionalnyeModuli, Tip
+
+
 def index(request):
     return render(request, 'main/index.html')
 
@@ -74,3 +78,100 @@ def admin_login(request):
             return render(request, 'main/admin_login.html', {'error': 'Неверный логин или пароль администратора'})
 
     return render(request, 'main/admin_login.html')
+
+# для вывода данных
+from django.shortcuts import get_object_or_404
+from .models import Praktiki, Zadaniya, UchebnyjPlan
+from .models import Praktiki, PeriodyPraktiki, Specialnosti, SpecialnostiGruppy, UchebnyjPlan, ProfessionalnyeModuli, Tip, Zadaniya
+
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import (Praktiki, PeriodyPraktiki, Specialnosti, 
+                    SpecialnostiGruppy, UchebnyjPlan, 
+                    ProfessionalnyeModuli, Zadaniya, RukovoditeliPraktik)
+
+@login_required
+def user_panel(request):
+    # Получаем текущего пользователя
+    user = request.user
+
+    # Получаем все практики, связанные с пользователем через related_name
+    praktiki = Praktiki.objects.filter(rukovoditeli__rukovoditel_nomer=user)
+
+    # Собираем данные для каждой практики
+    data = []
+    for praktika in praktiki:
+        period = praktika.period_nomer
+        tip = period.tip_kod
+        specialnost = praktika.specialnost_kod
+        gruppy = SpecialnostiGruppy.objects.filter(specialnosti_kod=specialnost)
+        modul = praktika.modul_nomer  # Это объект модели ProfessionalnyeModuli
+        mdks = ProfessionalnyeModuli.objects.filter(modul_nomer=modul)
+
+        # Форматируем даты
+        data_nachala = period.data_nachala.strftime('%d.%m.%Y')
+        data_okonchaniya = period.data_okonchaniya.strftime('%d.%m.%Y')
+
+        # Генерируем название практики
+        try:
+            # Извлекаем номер модуля
+            
+            modul_nomer = modul.naimenovanie_modulya.split()[0].split('.')[1]
+        except (AttributeError, IndexError):
+            modul_nomer = "Н/Д"  # Если номер модуля не найден, используем значение по умолчанию
+
+        # Получаем первую группу из QuerySet
+        gruppa = gruppy.first()
+        praktika_nazvanie = f"Группа_{gruppa.nazvanie_gruppy if gruppa else 'Н/Д'}_{period.god}_Задание_ПП{modul_nomer}"
+
+        # Добавляем данные в список
+        data.append({
+            'nomer_praktiki': praktika.nomer_praktiki,
+            'praktika_nazvanie': praktika_nazvanie,
+            'god': period.god,
+            'naimenovanie_tipa': tip.naimenovanie_tipa if tip else None,
+            'kod_specialnosti': specialnost.kod_specialnosti,
+            'nazvanie_specialnosti': specialnost.nazvanie_specialnosti,
+            'nazvanie_gruppy': ', '.join([gruppa.nazvanie_gruppy for gruppa in gruppy]) if gruppy.exists() else 'Н/Д',
+            'naimenovanie_modulya': modul.naimenovanie_modulya if modul and modul.naimenovanie_modulya else 'Н/Д',
+            'naimenovanie_mdk': ', '.join([mdk.naimenovanie_mdk for mdk in mdks]) if mdks.exists() else 'Н/Д',
+            'obem_v_chasah': period.obem_v_chasah,
+            'data_nachala': data_nachala,
+            'data_okonchaniya': data_okonchaniya,
+            'praktika_id': praktika.nomer_praktiki,  # Для ссылки на детальную страницу
+        })
+
+    # Передаем данные в шаблон
+    return render(request, 'main/user_panel.html', {'data': data})
+
+def praktika_detail(request, pk):
+    # Получаем практику по ее номеру
+    praktika = get_object_or_404(Praktiki, nomer_praktiki=pk)
+    # Проверяем, что modul_nomer существует
+    if not praktika.modul_nomer:
+        return render(request, 'main/praktika_detail.html', {
+            'error': 'Модуль для данной практики не найден.'
+        })
+    # Получаем связанные данные
+    period = praktika.period_nomer
+    uchebnyj_plan = praktika.modul_nomer  # Это объект модели UchebnyjPlan
+    mdks = ProfessionalnyeModuli.objects.filter(modul_nomer=uchebnyj_plan.nomer_modulya)
+    zadaniya = Zadaniya.objects.filter(praktika_nomer=praktika)
+    # Формируем название практики
+    gruppa = SpecialnostiGruppy.objects.filter(specialnosti_kod=praktika.specialnost_kod).first()
+    praktika_nazvanie = f"Группа_{gruppa.nazvanie_gruppy if gruppa else 'Н/Д'}_{period.god}_Задание_ПП{uchebnyj_plan.nomer_modulya.split('_')[-1]}"
+    # Собираем данные для таблицы
+    table_data = []
+    for zadanie in zadaniya:
+        kompetencii = uchebnyj_plan.kompetencii or 'Н/Д'
+        table_data.append({
+            'nazvanie_temy': zadanie.nazvanie_temy,
+            'vidy_rabot': zadanie.vidy_rabot,
+            'kompetencii': kompetencii,
+            'kolichestvo_chasov_na_odnu_rabotu': zadanie.kolichestvo_chasov_na_odnu_rabotu,
+        })
+    return render(request, 'main/praktika_detail.html', {
+        'praktika': praktika,
+        'praktika_nazvanie': praktika_nazvanie,
+        'table_data': table_data,
+    })

@@ -73,3 +73,29 @@ footer {
     background-color: #5a6268; /* Темнее при наведении */
     border-color: #545b62;
 }
+
+/* static/css/styles.css */
+
+.card {
+    margin-bottom: 20px;
+}
+
+
+/* static/css/styles.css */
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.card-text strong {
+    font-weight: bold;
+}
+
+.card-text div {
+    margin-bottom: 10px;
+}
+
+.card-text .d-flex {
+    justify-content: space-between;
+}

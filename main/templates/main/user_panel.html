@@ -3,6 +3,40 @@
 {% block title %}Пользовательская панель{% endblock %}
 
 {% block content %}
-<h1>Пользовательская панель</h1>
-<p>Здесь вы можете просматривать свои практики и задания.</p>
+<h2>Ваши практики</h2>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+    {% for item in data %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ item.praktika_nazvanie }}</h5>
+                <p class="card-text">
+                    <strong>Год:</strong> {{ item.god }}<br>
+                    <strong>Тип практики:</strong> {{ item.naimenovanie_tipa }}
+                </p>
+                <div class="mb-3">
+                    <strong>Код специальности:</strong> {{ item.kod_specialnosti }}<br>
+                    <strong>Наименование специальности:</strong> {{ item.nazvanie_specialnosti }}<br>
+                    <strong>Наименование группы:</strong> {{ item.nazvanie_gruppy }}
+                </div>
+                <div class="mb-3">
+                    <strong>Наименование модуля:</strong> {{ item.naimenovanie_modulya }}<br>
+                    <strong>Наименование МДК:</strong> {{ item.naimenovanie_mdk }}
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <strong>Объем в часах:</strong> {{ item.obem_v_chasah }}
+                    </div>
+                    <div>
+                        <strong>Дата начала:</strong> {{ item.data_nachala }}<br>
+                        <strong>Дата окончания:</strong> {{ item.data_okonchaniya }}
+                    </div>
+                </div>
+                <a href="{% url 'praktika_detail' item.praktika_id %}" class="btn btn-primary w-100">Просмотреть задание</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
