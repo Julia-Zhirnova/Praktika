@@ -1,10 +1,7 @@
 {% extends 'main/base.html' %}
-
 {% block title %}Пользовательская панель{% endblock %}
-
 {% block content %}
 <h2>Ваши практики</h2>
-
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for item in data %}
     <div class="col">
@@ -33,7 +30,9 @@
                         <strong>Дата окончания:</strong> {{ item.data_okonchaniya }}
                     </div>
                 </div>
-                <a href="{% url 'praktika_detail' item.praktika_id %}" class="btn btn-primary w-100">Просмотреть задание</a>
+                <a href="{% url 'praktika_detail' item.praktika_id %}" class="btn btn-primary">Просмотреть задание</a>
+                <!-- Add Print Version Button -->
+                <a href="{% url 'generate_praktika_doc' item.praktika_id %}" class="btn btn-secondary mt-2">Версия для печати</a>
             </div>
         </div>
     </div>
